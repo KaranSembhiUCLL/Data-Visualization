@@ -1,0 +1,44 @@
+:root { --paper:#fbf8f1; --ink:#1e2b25; --muted:#6b6a63; --line:#e4dfd3;
+        --dup:#d9572b; --new:#2f6fb3; --grey:#a39e92; }
+body { background: var(--paper); }
+.navbar { border-bottom: 1px solid var(--line); }
+.navbar-brand { font-family: Fraunces, Georgia, serif; font-weight: 600; letter-spacing: -.01em; }
+.card { border: 1px solid var(--line); box-shadow: none; }
+.card-header { background: transparent; font-weight: 600; border-bottom: 1px solid var(--line); }
+.step { display:inline-grid; place-items:center; width:22px; height:22px; border-radius:50%;
+        background: var(--ink); color: var(--paper); font-size:.75rem; margin-right:.5rem; }
+.qtag { float:right; font: 500 .72rem "IBM Plex Mono", monospace; color: var(--muted); }
+.hint { color: var(--muted); font-size: .88rem; }
+.mono, .score { font-family: "IBM Plex Mono", monospace; }
+.pill { display:inline-block; padding:1px 8px; border-radius:999px; font-size:.78rem; font-weight:600; white-space:nowrap; }
+.pill.dup { background:#fbe3d9; color:#9c3412; } .pill.new { background:#dde8f6; color:#1d4f86; }
+.pill.na  { background:#ebe8e1; color:#5d5a52; } .pill.bad { background:#f7d6d6; color:#8f1d1d; }
+.pill.warn{ background:#fbedc6; color:#7a5300; }
+.cmp { width:100%; font-size:.9rem; } .cmp th { color:var(--muted); font-weight:500; width:22%; }
+.cmp td, .cmp th { padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+.cmp .m { width:34px; text-align:center; font-size:1rem; }
+.m.same { color:#1b7a4a; } .m.close { color:#b27100; } .m.diff { color:#b3261e; } .m.none { color:var(--grey); }
+.verdict { margin-top:.75rem; padding:.6rem .8rem; border-radius:8px; background:#f2eee4; }
+.chip { display:inline-block; padding:2px 10px; border-radius:999px; background:var(--ink); color:var(--paper); font-size:.8rem; }
+.chip a { color: var(--paper); margin-left:.4rem; text-decoration:none; }
+/* charts */
+.d3-hist svg, .d3-bar svg { display:block; font-family: "IBM Plex Sans", system-ui, sans-serif; }
+.bar.dup { fill: var(--dup); } .bar.new { fill: var(--new); } .bar.uncat { fill: var(--grey); }
+.grid line { stroke: var(--line); } .grid text, .axis text { fill: var(--muted); font-size: 11px; }
+.axis path, .axis line { stroke: #cfc9bb; }
+.axis-title { fill: var(--muted); font-size: 11px; }
+.rug { stroke: var(--ink); stroke-width: 1.5; opacity: .55; }
+.thr line { stroke: var(--ink); stroke-width: 2; stroke-dasharray: 4 3; }
+.thr text { fill: var(--ink); font-size: 11px; font-weight: 600; }
+.catrow .hitrow { fill: transparent; } .catrow:hover .hitrow { fill: #f1ece0; }
+.catrow.faded { opacity: .35; } .catrow.on .cat-label { font-weight: 700; }
+.cat-label { fill: var(--ink); font-size: 12px; } .val-label { fill: var(--muted); font-size: 11px; font-family: "IBM Plex Mono", monospace; }
+.viz-tip { position:absolute; pointer-events:none; background:#fff; border:1px solid var(--line); border-radius:8px;
+           padding:6px 10px; font-size:12px; box-shadow:0 4px 14px rgba(0,0,0,.08); z-index:2000; transition:opacity .1s; }
+.viz-tip .muted { color: var(--muted); }
+table.dataTable tbody tr.selected > * { box-shadow: inset 0 0 0 9999px rgba(30,43,37,.10) !important; color: inherit !important; }
+.bslib-value-box .value-box-area { padding: .9rem 1.1rem; }
+.bslib-value-box .value-box-value { font-family: Fraunces, Georgia, serif; }
+.bslib-value-box { min-height: 0 !important; }
+.datatables.html-widget { height: auto !important; min-height: 0 !important; flex: none !important; }
+.bslib-grid { grid-template-rows: none !important; grid-auto-rows: auto !important; }

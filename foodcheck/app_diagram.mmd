@@ -1,0 +1,128 @@
+%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
+
+flowchart LR
+
+  subgraph UI_IN["UI inputs"]
+    I_dataset(["input$dataset<br/>text / numeric"])
+    I_threshold(["input$threshold"])
+    I_sort(["input$sort_by"])
+    I_topn(["input$top_n"])
+    I_nutrient(["input$nutrient"])
+    I_enrich(["input$enrich<br/>Auto-Enrich button"])
+    I_drag(["input$score_hist_threshold<br/>drag line in histogram"])
+    E_pending{{"input$pending_table_rows_selected"}}
+    E_match{{"input$match_table_rows_selected"}}
+    E_bar{{"input$category_bar_click"}}
+  end
+
+  subgraph SERVER["Server logic"]
+    D_text[("text_food.xlsx")]
+    D_num[("numeric_food.xlsx")]
+    D_web[("Nutrition web source<br/>(e.g. Open Food Facts API)")]
+
+    R_db("db()<br/>active + pending of chosen dataset")
+    R_sim("similarity()<br/>pending × active scores<br/>expensive, once per dataset")
+    R_flag("flagged()<br/>duplicate / new per pending")
+    R_pend("pending_view()")
+    R_cat("category_stats()<br/>incl. Uncategorised")
+    R_cand("candidates()")
+    R_cmp("comparison()")
+    R_qual("quality_flags()")
+    R_web("web_values()<br/>eventReactive · text file only")
+
+    O_item[/"observeEvent:<br/>store pending row"/]
+    O_cand[/"observeEvent:<br/>store match row"/]
+    O_cat[/"observeEvent:<br/>store category click"/]
+    O_reset[/"observeEvent:<br/>reset selections + threshold"/]
+    O_drag[/"observeEvent:<br/>update slider"/]
+
+    S_item[["selected_item<br/>(reactiveVal)"]]
+    S_cand[["selected_candidate<br/>(reactiveVal)"]]
+    S_cat[["selected_category<br/>(reactiveVal)"]]
+  end
+
+  subgraph UI_OUT["UI outputs"]
+    P_pend["output$pending_table · Q1"]
+    P_cmp["output$compare_table · Q2"]
+    P_web["output$enrich_table · Q3"]
+    P_cat["output$category_bar · Q4"]
+    P_count["output$status_counts · Q5"]
+    P_hist["output$score_hist (D3) · Q6"]
+    P_qual["output$quality_table · Q7"]
+    P_match["output$match_table · Q8"]
+  end
+
+  D_text --> R_db
+  D_num --> R_db
+  I_dataset --> R_db
+  R_db --> R_sim
+
+  R_sim --> R_flag
+  I_threshold --> R_flag
+
+  R_flag --> R_pend
+  S_cat --> R_pend
+  R_pend --> P_pend
+
+  R_db --> R_cat
+  I_sort --> R_cat
+  R_cat --> P_cat
+
+  R_flag --> P_count
+
+  R_sim --> P_hist
+  I_threshold --> P_hist
+
+  R_sim --> R_cand
+  S_item --> R_cand
+  I_threshold --> R_cand
+  I_topn --> R_cand
+  R_cand --> P_match
+
+  R_db --> R_cmp
+  S_item --> R_cmp
+  S_cand --> R_cmp
+  R_cmp --> P_cmp
+
+  I_enrich -.->|trigger| R_web
+  S_item --> R_web
+  R_db --> R_web
+  D_web --> R_web
+  R_web --> P_web
+
+  D_num --> R_qual
+  I_nutrient --> R_qual
+  R_qual --> P_qual
+
+  E_pending -.->|trigger| O_item
+  O_item ==>|writes| S_item
+  O_item ==>|resets to best match| S_cand
+  R_flag --> O_item
+  E_match -.->|trigger| O_cand
+  O_cand ==>|writes| S_cand
+  E_bar -.->|trigger| O_cat
+  O_cat ==>|writes| S_cat
+  I_dataset -.->|trigger| O_reset
+  O_reset ==>|writes| S_item
+  O_reset ==>|writes| S_cand
+  O_reset ==>|writes| S_cat
+  I_drag -.->|trigger| O_drag
+  O_drag ==>|updates| I_threshold
+
+  classDef widget fill:#dbe8ff,stroke:#3b6fd8,color:#111
+  classDef event fill:#ffe08a,stroke:#b8860b,color:#111
+  classDef data fill:#e6e6e6,stroke:#777,color:#111
+  classDef cond fill:#dff7e3,stroke:#2e9b4f,color:#111
+  classDef state fill:#ffe0ea,stroke:#c2185b,color:#111
+  classDef obs fill:#ece4ff,stroke:#7b4fd8,color:#111
+  classDef out fill:#ffffff,stroke:#333,color:#111
+  class I_dataset,I_threshold,I_sort,I_topn,I_nutrient,I_enrich,I_drag widget
+  class E_pending,E_match,E_bar event
+  class D_text,D_num,D_web data
+  class R_db,R_sim,R_flag,R_pend,R_cat,R_cand,R_cmp,R_qual,R_web cond
+  class S_item,S_cand,S_cat state
+  class O_item,O_cand,O_cat,O_reset,O_drag obs
+  class P_pend,P_cmp,P_web,P_cat,P_count,P_hist,P_qual,P_match out
+  style UI_IN fill:#fdf0ff,stroke:#e08ae0
+  style SERVER fill:#effdfb,stroke:#7fd6c8
+  style UI_OUT fill:#fff6ec,stroke:#f0b27a
